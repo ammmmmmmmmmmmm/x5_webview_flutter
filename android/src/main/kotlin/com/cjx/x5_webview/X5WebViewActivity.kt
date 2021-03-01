@@ -54,19 +54,7 @@ class X5WebViewActivity : Activity() {
                     return super.shouldOverrideUrlLoading(view, url)
                 }
 
-                override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest?): Boolean {
-                    Log.e("X5WebViewActivity", "openurl2:" + request?.url.toString())
-                    if(isUrlIntercept){
-                        val map=HashMap<String,Any>()
-                        map["url"] = request?.url.toString()
-                        map["headers"] = request?.requestHeaders?:HashMap<String,String>()
-                        Log.e("X5WebViewActivity", "X5WebViewPlugin.methodChannel:${X5WebViewPlugin.methodChannel==null}")
-                        X5WebViewPlugin.methodChannel?.invokeMethod("onUrlLoad",map)
-                        return isUrlIntercept
-                    }
-                    view.loadUrl(request?.url.toString())
-                    return super.shouldOverrideUrlLoading(view, request)
-                }
+
             }
         }
     }

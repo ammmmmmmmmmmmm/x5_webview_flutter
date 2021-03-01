@@ -53,7 +53,7 @@
         </service>
         <provider
             android:name="com.tencent.smtt.utils.FileProvider"
-            android:authorities="${applicationId}"
+            android:authorities="${applicationId}.fileProvider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

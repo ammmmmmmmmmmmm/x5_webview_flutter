@@ -70,21 +70,24 @@ class X5WebViewPlugin : MethodCallHandler, FlutterPlugin, ActivityAware {
     override fun onMethodCall(call: MethodCall, result: Result) {
         when (call.method) {
             "init" -> {
-                val map = hashMapOf<String, Any>()
-                map[TbsCoreSettings.TBS_SETTINGS_USE_SPEEDY_CLASSLOADER] = true
-                map[TbsCoreSettings.TBS_SETTINGS_USE_DEXLOADER_SERVICE] = true
-                QbSdk.initTbsSettings(map)
-                QbSdk.initX5Environment(mContext?.applicationContext, object : QbSdk.PreInitCallback {
-                    override fun onCoreInitFinished() {
-                        Log.e("X5Sdk","onCoreInitFinished")
-                    }
+//                val map = hashMapOf<String, Any>()
+//                map[TbsCoreSettings.TBS_SETTINGS_USE_SPEEDY_CLASSLOADER] = true
+//                map[TbsCoreSettings.TBS_SETTINGS_USE_DEXLOADER_SERVICE] = true
+//                QbSdk.initTbsSettings(map)
+              val isOK =  QbSdk.preinstallStaticTbs(mContext?.applicationContext);
 
-                    override fun onViewInitFinished(p0: Boolean) {
-                        //x5內核初始化完成的回调，为true表示x5内核加载成功，否则表示x5内核加载失败，会自动切换到系统内核。
-                        result.success(p0)
-                    }
-
-                })
+                result.success(isOK);
+//                QbSdk.initX5Environment(mContext?.applicationContext, object : QbSdk.PreInitCallback {
+//                    override fun onCoreInitFinished() {
+//                        Log.e("X5Sdk","onCoreInitFinished")
+//                    }
+//
+//                    override fun onViewInitFinished(p0: Boolean) {
+//                        //x5內核初始化完成的回调，为true表示x5内核加载成功，否则表示x5内核加载失败，会自动切换到系统内核。
+//                        result.success(p0)
+//                    }
+//
+//                })
             }
             "canUseTbsPlayer" -> {
                 //返回是否可以使用tbsPlayer
@@ -149,14 +152,10 @@ class X5WebViewPlugin : MethodCallHandler, FlutterPlugin, ActivityAware {
                     return
                 }
                 QbSdk.canOpenFile(mActivity, filePath) { canOpenFile ->
-                    if (canOpenFile) {
-                        QbSdk.openFileReader(mActivity, filePath, params) { msg ->
-                            Log.d("QbSdk", msg)
-                        }
-                    } else {
+
                         Toast.makeText(mContext, "X5Sdk无法打开此文件", Toast.LENGTH_LONG).show()
                         result.success("X5Sdk无法打开此文件")
-                    }
+
                 }
             }
 
