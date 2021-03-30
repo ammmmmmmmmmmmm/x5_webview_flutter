@@ -13,6 +13,7 @@ import android.view.Window
 import com.tencent.smtt.export.external.interfaces.IX5WebChromeClient
 import com.tencent.smtt.export.external.interfaces.WebResourceRequest
 import com.tencent.smtt.sdk.WebChromeClient
+import com.tencent.smtt.sdk.WebSettings
 import com.tencent.smtt.sdk.WebView
 import com.tencent.smtt.sdk.WebViewClient
 import io.flutter.embedding.engine.systemchannels.KeyEventChannel
@@ -32,14 +33,17 @@ class X5WebView(private val context: Context, private val id: Int, private val p
     init {
         webView = WebView(context)
         channel.setMethodCallHandler(this)
-
         webView.apply {
             settings.javaScriptEnabled = params["javaScriptEnabled"] as Boolean
 //            settings.useWideViewPort = true
             settings.domStorageEnabled = true
-//            settings.javaScriptCanOpenWindowsAutomatically = true
-//                settings.layoutAlgorithm=LayoutAlgorithm.SINGLE_COLUMN
-
+            settings.lightTouchEnabled= true
+            settings.cacheMode = WebSettings.LOAD_NO_CACHE
+            Log.e("x5webview/constructor",params.toString())
+            if(params["cacheMode"] != null) {
+                Log.e("flutter/cachemode",params["cacheMode"].toString())
+                settings.cacheMode =params["cacheMode"] as Int
+            }
             if (params["javascriptChannels"] != null) {
                 val names = params["javascriptChannels"] as List<String>
                 for (name in names) {
@@ -72,15 +76,7 @@ class X5WebView(private val context: Context, private val id: Int, private val p
                     return super.shouldOverrideUrlLoading(view, url)
                 }
 
-//                override fun shouldOverrideUrlLoading(view: WebView, requset: WebResourceRequest?): Boolean {
-//                    if (urlInterceptEnabled) {
-//                        val arg = hashMapOf<String, String>()
-//                        arg["url"] = requset?.url.toString()
-//                        channel.invokeMethod("onUrlLoading", arg)
-//                        return true
-//                    }
-//                    view.loadUrl(requset?.url.toString())
-//                    return super.shouldOverrideUrlLoading(view, requset)
+
 //                }
 
                 override fun shouldOverrideKeyEvent(p0: WebView?, event: KeyEvent?): Boolean {

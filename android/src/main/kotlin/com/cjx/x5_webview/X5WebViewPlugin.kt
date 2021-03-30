@@ -6,11 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import com.tencent.smtt.export.external.TbsCoreSettings
-import com.tencent.smtt.sdk.QbSdk
-import com.tencent.smtt.sdk.TbsListener
-import com.tencent.smtt.sdk.TbsVideo
-import com.tencent.smtt.sdk.WebView
+import com.tencent.smtt.sdk.*
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -19,10 +15,13 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry.Registrar
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import java.io.File
 
 class X5WebViewPlugin : MethodCallHandler, FlutterPlugin, ActivityAware {
-    constructor(mContext: Context,mActivity: Activity){
+    constructor(mContext: Context, mActivity: Activity){
         this.mActivity=mActivity
         this.mContext=mContext
     }
@@ -38,7 +37,7 @@ class X5WebViewPlugin : MethodCallHandler, FlutterPlugin, ActivityAware {
         @JvmStatic
         fun registerWith(registrar: Registrar) {
             val channel = MethodChannel(registrar.messenger(), "com.cjx/x5Video")
-            channel.setMethodCallHandler(X5WebViewPlugin(registrar.context(),registrar.activity()))
+            channel.setMethodCallHandler(X5WebViewPlugin(registrar.context(), registrar.activity()))
             setCallBack(channel, registrar.activity())
             registrar.platformViewRegistry().registerViewFactory("com.cjx/x5WebView", X5WebViewFactory(registrar.messenger(), registrar.activity(), registrar.view()))
         }
@@ -74,9 +73,13 @@ class X5WebViewPlugin : MethodCallHandler, FlutterPlugin, ActivityAware {
 //                map[TbsCoreSettings.TBS_SETTINGS_USE_SPEEDY_CLASSLOADER] = true
 //                map[TbsCoreSettings.TBS_SETTINGS_USE_DEXLOADER_SERVICE] = true
 //                QbSdk.initTbsSettings(map)
-              val isOK =  QbSdk.preinstallStaticTbs(mContext?.applicationContext);
+                GlobalScope.launch {
+                    val isOK = QbSdk.preinstallStaticTbs(mContext?.applicationContext);
+                    MainScope().launch {
+                        result.success(isOK)
+                    }
+                }
 
-                result.success(isOK);
 //                QbSdk.initX5Environment(mContext?.applicationContext, object : QbSdk.PreInitCallback {
 //                    override fun onCoreInitFinished() {
 //                        Log.e("X5Sdk","onCoreInitFinished")
@@ -153,8 +156,8 @@ class X5WebViewPlugin : MethodCallHandler, FlutterPlugin, ActivityAware {
                 }
                 QbSdk.canOpenFile(mActivity, filePath) { canOpenFile ->
 
-                        Toast.makeText(mContext, "X5Sdk无法打开此文件", Toast.LENGTH_LONG).show()
-                        result.success("X5Sdk无法打开此文件")
+                    Toast.makeText(mContext, "X5Sdk无法打开此文件", Toast.LENGTH_LONG).show()
+                    result.success("X5Sdk无法打开此文件")
 
                 }
             }
@@ -162,8 +165,8 @@ class X5WebViewPlugin : MethodCallHandler, FlutterPlugin, ActivityAware {
             "openWebActivity" -> {
                 val url = call.argument<String>("url")
                 val title = call.argument<String>("title")
-                val headers = call.argument<HashMap<String,String>>("headers")?:HashMap()
-                val isUrlIntercept=call.argument<Boolean>("isUrlIntercept")
+                val headers = call.argument<HashMap<String, String>>("headers") ?: HashMap()
+                val isUrlIntercept = call.argument<Boolean>("isUrlIntercept")
                 val intent = Intent(mActivity, X5WebViewActivity::class.java)
                 intent.putExtra("url", url)
                 intent.putExtra("title", title)
@@ -200,7 +203,7 @@ class X5WebViewPlugin : MethodCallHandler, FlutterPlugin, ActivityAware {
         mContext = binding.applicationContext
 
         methodChannel = MethodChannel(binding.binaryMessenger, "com.cjx/x5Video")
-        methodChannel?.setMethodCallHandler(X5WebViewPlugin(mContext!!,mActivity!!))
+        methodChannel?.setMethodCallHandler(X5WebViewPlugin(mContext!!, mActivity!!))
         setCallBack(methodChannel!!, mActivity!!)
         binding.platformViewRegistry.registerViewFactory("com.cjx/x5WebView", X5WebViewFactory(binding.binaryMessenger, mActivity!!, null))
     }
@@ -230,7 +233,7 @@ class X5WebViewPlugin : MethodCallHandler, FlutterPlugin, ActivityAware {
         this.mActivity = binding.activity
         this.mContext = binding.activity.applicationContext
         methodChannel = MethodChannel(mFlutterPluginBinding?.binaryMessenger, "com.cjx/x5Video")
-        methodChannel?.setMethodCallHandler(X5WebViewPlugin(mContext!!,mActivity!!))
+        methodChannel?.setMethodCallHandler(X5WebViewPlugin(mContext!!, mActivity!!))
         setCallBack(methodChannel!!, mActivity!!)
         mFlutterPluginBinding?.platformViewRegistry?.registerViewFactory("com.cjx/x5WebView", X5WebViewFactory(mFlutterPluginBinding?.binaryMessenger!!, mActivity!!, null))
 

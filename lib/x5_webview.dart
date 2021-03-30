@@ -29,11 +29,22 @@ class X5WebView extends StatefulWidget {
   final Map<String, String> header;
   final String userAgentString;
   final OverrideKeyEvent shouldOverrideKeyEvent;
+  final int cacheMode;
+
+ static final int CACHE_MODE_NORMAL = 0;
+ static final int CACHE_MODE_DEFAULT = -1;
+ static final int CACHE_MODE_ELSE_NETWORK = 1;
+ static final int CACHE_MODE_NO_CACHE = 2;
+ static final int CACHE_MODE_CACHE_ONLY = 3;
+
+
+
   const X5WebView(
       {Key key,
       this.url,
       this.javaScriptEnabled = false,
       this.onWebViewCreated,
+      this.cacheMode = 0,
       this.onPageFinished,
       this.onShowCustomView,
       this.onHideCustomView,
@@ -250,6 +261,7 @@ class _CreationParams {
   _CreationParams(
       {this.url,
       this.javaScriptEnabled,
+      this.cacheMode = 0,
       this.javascriptChannels,
       this.urlInterceptEnabled,
       this.header,
@@ -262,6 +274,7 @@ class _CreationParams {
         javascriptChannels: widget.javascriptChannels.names,
         urlInterceptEnabled: widget.onUrlLoading != null,
         userAgentString: widget.userAgentString,
+        cacheMode:widget.cacheMode,
         header: widget.header);
   }
 
@@ -271,7 +284,7 @@ class _CreationParams {
   final Map<String, String> header;
   final bool urlInterceptEnabled;
   final String userAgentString;
-
+  final int cacheMode;
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'url': url,
@@ -279,7 +292,8 @@ class _CreationParams {
       "javascriptChannels": javascriptChannels,
       "urlInterceptEnabled": urlInterceptEnabled,
       "header": header,
-      "userAgentString": userAgentString
+      "userAgentString": userAgentString,
+      "cacheMode":cacheMode
     };
   }
 }

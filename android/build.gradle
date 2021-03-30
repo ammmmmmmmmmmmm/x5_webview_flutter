@@ -9,7 +9,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.6.2'
+        classpath 'com.android.tools.build:gradle:3.3.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -19,19 +19,19 @@ rootProject.allprojects {
         google()
         jcenter()
     }
-    project.configurations.all {
-        resolutionStrategy.eachDependency { details ->
-            if (details.requested.group == 'androidx.core') {
-                details.useVersion "1.0.1"
-            }
-            if (details.requested.group == 'androidx.lifecycle') {
-                details.useVersion "2.0.0"
-            }
-            if (details.requested.group == 'androidx.versionedparcelable') {
-                details.useVersion "1.0.0"
-            }
-        }
-    }
+//    project.configurations.all {
+//        resolutionStrategy.eachDependency { details ->
+//            if (details.requested.group == 'androidx.core') {
+//                details.useVersion "1.0.1"
+//            }
+//            if (details.requested.group == 'androidx.lifecycle') {
+//                details.useVersion "2.0.0"
+//            }
+//            if (details.requested.group == 'androidx.versionedparcelable') {
+//                details.useVersion "1.0.0"
+//            }
+//        }
+//    }
 }
 
 apply plugin: 'com.android.library'
@@ -56,4 +56,6 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
    //implementation 'com.tencent.tbs.tbssdk:sdk:43967'
    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.2'
+
 }
